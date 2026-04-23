@@ -1,0 +1,343 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import { doc, setDoc, collection, getDoc } from 'firebase/firestore';
+import { auth, firestore } from '../../services/firebase';
+import { generateInviteToken } from '../../utils/inviteToken';
+import { Colors } from '../../constants/colors';
+import { Typography } from '../../constants/typography';
+import { PrivateCircle } from '../../types/circle.types';
+
+interface CreateCircleStep3Props {
+  circleData: {
+    type: 'friends' | 'family' | 'office' | 'custom';
+    name: string;
+    tagline: string;
+    photoUrl?: string;
+  };
+  onBack: () => void;
+  onSuccess: (circleId: string) => void;
+}
+
+const PHOTO_PRESETS = [
+  { id: 'preset-1', bgColor: '#8B4513', icon: '⛰️' },
+  { id: 'preset-2', bgColor: '#87CEEB', icon: '🏖️' },
+  { id: 'preset-3', bgColor: '#2ECC71', icon: '🌲' },
+  { id: 'preset-4', bgColor: '#34495E', icon: '🏙️' },
+  { id: 'preset-5', bgColor: '#0F1419', icon: '🌌' },
+  { id: 'preset-6', bgColor: '#FF69B4', icon: '🌸' },
+];
+
+/**
+ * CreateCircleStep3 - Review and create circle
+ */
+export default function CreateCircleStep3({
+  circleData,
+  onBack,
+  onSuccess,
+}: CreateCircleStep3Props) {
+  const [loading, setLoading] = useState(false);
+
+  const getPresetColor = (presetId?: string) => {
+    if (!presetId) return Colors.primary;
+    const preset = PHOTO_PRESETS.find((p) => p.id === presetId);
+    return preset?.bgColor || Colors.primary;
+  };
+
+  const getPresetIcon = (presetId?: string) => {
+    if (!presetId) return '👥';
+    const preset = PHOTO_PRESETS.find((p) => p.id === presetId);
+    return preset?.icon || '👥';
+  };
+
+  const handleCreateCircle = async () => {
+    try {
+      setLoading(true);
+
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        Alert.alert('Error', 'You must be logged in');
+        return;
+      }
+
+      // Get user info from Firestore
+      const userDocRef = doc(firestore, 'users', currentUser.uid);
+      const userSnap = await getDoc(userDocRef);
+
+      if (!userSnap.exists()) {
+        Alert.alert('Error', 'User profile not found');
+        return;
+      }
+
+      const userData = userSnap.data();
+
+      // Generate invite token
+      const inviteToken = generateInviteToken();
+
+      // Create circle document
+      const now = Date.now();
+      const circleId = doc(collection(firestore, 'circles')).id;
+
+      const circleDoc: PrivateCircle = {
+        id: circleId,
+        name: circleData.name,
+        tagline: circleData.tagline,
+        type: circleData.type,
+        photoUrl: circleData.photoUrl,
+        creatorUid: currentUser.uid,
+        members: [
+          {
+            uid: currentUser.uid,
+            displayName: userData.displayName || 'Unknown',
+            avatarUrl: userData.avatarUrl || '',
+            role: 'admin',
+            joinedAt: now,
+          },
+        ],
+        inviteToken,
+        createdAt: now,
+        isArchived: false,
+        lastMessageAt: now,
+        lastMessagePreview: `${userData.displayName || 'Admin'} created this circle`,
+      };
+
+      // Write to Firestore
+      await setDoc(doc(firestore, 'circles', circleId), circleDoc);
+
+      onSuccess(circleId);
+    } catch (error) {
+      console.error('Error creating circle:', error);
+      Alert.alert('Error', 'Failed to create circle. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 24 }}
+      >
+        {/* Review Summary */}
+        <Text
+          style={{
+            fontSize: Typography.fontSize.lg,
+            fontWeight: Typography.fontWeight.semibold,
+            color: Colors.textPrimary,
+            marginBottom: 24,
+          }}
+        >
+          Review your circle
+        </Text>
+
+        {/* Summary Card */}
+        <View
+          style={{
+            backgroundColor: Colors.surfaceAlt,
+            borderRadius: 12,
+            padding: 20,
+            marginBottom: 32,
+            alignItems: 'center',
+          }}
+        >
+          {/* Circle Photo Preview */}
+          <View
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 50,
+              backgroundColor: getPresetColor(circleData.photoUrl),
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 16,
+            }}
+          >
+            <Text style={{ fontSize: 48 }}>
+              {getPresetIcon(circleData.photoUrl)}
+            </Text>
+          </View>
+
+          {/* Circle Name */}
+          <Text
+            style={{
+              fontSize: Typography.fontSize.lg,
+              fontWeight: Typography.fontWeight.bold,
+              color: Colors.textPrimary,
+              marginBottom: 4,
+            }}
+          >
+            {circleData.name}
+          </Text>
+
+          {/* Circle Type */}
+          <Text
+            style={{
+              fontSize: Typography.fontSize.sm,
+              color: Colors.textSecondary,
+              marginBottom: 12,
+              textTransform: 'capitalize',
+            }}
+          >
+            {circleData.type}
+          </Text>
+
+          {/* Tagline */}
+          {circleData.tagline && (
+            <Text
+              style={{
+                fontSize: Typography.fontSize.md,
+                color: Colors.textSecondary,
+                textAlign: 'center',
+                lineHeight: Typography.lineHeight.normal * Typography.fontSize.md,
+              }}
+            >
+              {circleData.tagline}
+            </Text>
+          )}
+        </View>
+
+        {/* Details List */}
+        <View style={{ marginBottom: 40 }}>
+          <View
+            style={{
+              paddingVertical: 12,
+              borderBottomWidth: 1,
+              borderBottomColor: Colors.border,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text style={{ color: Colors.textSecondary }}>Type</Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontWeight: Typography.fontWeight.semibold,
+                textTransform: 'capitalize',
+              }}
+            >
+              {circleData.type}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              paddingVertical: 12,
+              borderBottomWidth: 1,
+              borderBottomColor: Colors.border,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text style={{ color: Colors.textSecondary }}>Invite Mode</Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontWeight: Typography.fontWeight.semibold,
+              }}
+            >
+              Invite-only
+            </Text>
+          </View>
+
+          <View
+            style={{
+              paddingVertical: 12,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text style={{ color: Colors.textSecondary }}>Members</Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontWeight: Typography.fontWeight.semibold,
+              }}
+            >
+              1 (you)
+            </Text>
+          </View>
+        </View>
+
+        <Text
+          style={{
+            fontSize: Typography.fontSize.sm,
+            color: Colors.textTertiary,
+            textAlign: 'center',
+            lineHeight: Typography.lineHeight.normal * Typography.fontSize.sm,
+          }}
+        >
+          You can add members and change settings after creating the circle.
+        </Text>
+      </ScrollView>
+
+      {/* Footer with buttons */}
+      <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+        {/* Back Link */}
+        <TouchableOpacity
+          onPress={onBack}
+          disabled={loading}
+          style={{
+            paddingVertical: 12,
+            marginBottom: 12,
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              fontSize: Typography.fontSize.md,
+              color: loading ? Colors.textTertiary : Colors.primary,
+              fontWeight: Typography.fontWeight.semibold,
+            }}
+          >
+            ← Back
+          </Text>
+        </TouchableOpacity>
+
+        {/* Create Button */}
+        <TouchableOpacity
+          onPress={handleCreateCircle}
+          disabled={loading}
+          style={{
+            backgroundColor: loading ? Colors.textTertiary : Colors.primary,
+            borderRadius: 8,
+            paddingVertical: 14,
+            alignItems: 'center',
+          }}
+        >
+          <Text
+            style={{
+              fontSize: Typography.fontSize.md,
+              fontWeight: Typography.fontWeight.semibold,
+              color: Colors.surface,
+            }}
+          >
+            {loading ? 'Creating...' : 'Create Circle'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Loading Modal */}
+      {loading && (
+        <Modal transparent={true} animationType="fade">
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <ActivityIndicator size="large" color={Colors.surface} />
+          </View>
+        </Modal>
+      )}
+    </>
+  );
+}
