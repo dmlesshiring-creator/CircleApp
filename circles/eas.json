@@ -1,0 +1,59 @@
+{
+  "cli": {
+    "version": ">= 13.2.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
+      },
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyDqMa66Bnksuu7f7lh0PI08yARWDx_ICDs",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "circleapp-fbf77.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "circleapp-fbf77",
+        "EXPO_PUBLIC_FIREBASE_DATABASE_URL": "https://circleapp-fbf77-default-rtdb.firebaseio.com",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "circleapp-fbf77.firebasestorage.app",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "111983218749",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:111983218749:web:232a0e885b9509d4d79a54"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyDqMa66Bnksuu7f7lh0PI08yARWDx_ICDs",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "circleapp-fbf77.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "circleapp-fbf77",
+        "EXPO_PUBLIC_FIREBASE_DATABASE_URL": "https://circleapp-fbf77-default-rtdb.firebaseio.com",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "circleapp-fbf77.firebasestorage.app",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "111983218749",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:111983218749:web:232a0e885b9509d4d79a54"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
+      }
+    }
+  }
+}

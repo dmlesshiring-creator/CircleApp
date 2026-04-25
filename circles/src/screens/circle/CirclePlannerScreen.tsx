@@ -41,7 +41,7 @@ type CirclePlannerScreenRouteProp = RouteProp<
   'CirclePlannerScreen'
 >;
 
-export const CirclePlannerScreen: React.FC = () => {
+export default function CirclePlannerScreen() {
   const navigation = useNavigation<CirclePlannerScreenNavigationProp>();
   const route = useRoute<CirclePlannerScreenRouteProp>();
   const { circleId } = route.params;

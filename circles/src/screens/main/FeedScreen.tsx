@@ -292,6 +292,17 @@ export const FeedScreen: React.FC = () => {
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmptyState}
+          // Performance optimizations
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          removeClippedSubviews={true}
+          updateCellsBatchingPeriod={50}
+          getItemLayout={(data, index) => ({
+            length: 200, // Approximate height of FeedCard
+            offset: 200 * index,
+            index,
+          })}
         />
       )}
 
