@@ -82,8 +82,8 @@ export default function SplashScreen({ navigation }: any) {
       const currentUser = auth.currentUser;
 
       if (!currentUser) {
-        // User not authenticated → start phone entry flow
-        navigation.replace(Routes.PHONE_ENTRY);
+        // User not authenticated → start email sign in flow
+        navigation.replace('GoogleSignIn');
         return;
       }
 
@@ -102,8 +102,8 @@ export default function SplashScreen({ navigation }: any) {
       }
     } catch (error) {
       console.error('Error checking auth state in splash:', error);
-      // On error, fallback to phone entry
-      navigation.replace(Routes.PHONE_ENTRY);
+      // On error, fallback to email sign in
+      navigation.replace('GoogleSignIn');
     }
   };
 

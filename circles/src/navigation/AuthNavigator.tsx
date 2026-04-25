@@ -1,8 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../screens/auth/SplashScreen';
-import PhoneEntryScreen from '../screens/auth/PhoneEntryScreen';
-import OTPScreen from '../screens/auth/OTPScreen';
+import GoogleSignInScreen from '../screens/auth/GoogleSignInScreen';
 import DisplayNameScreen from '../screens/auth/DisplayNameScreen';
 import AvatarScreen from '../screens/auth/AvatarScreen';
 import BioScreen from '../screens/auth/BioScreen';
@@ -36,12 +35,8 @@ export default function AuthNavigator() {
         options={{ animationEnabled: false }}
       />
       <Stack.Screen
-        name={Routes.PHONE_ENTRY}
-        component={PhoneEntryScreen}
-      />
-      <Stack.Screen
-        name={Routes.OTP}
-        component={OTPScreen}
+        name="GoogleSignIn"
+        component={GoogleSignInScreen}
       />
       <Stack.Screen
         name={Routes.DISPLAY_NAME}

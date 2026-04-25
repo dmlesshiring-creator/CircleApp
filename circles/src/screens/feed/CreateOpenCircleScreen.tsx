@@ -749,3 +749,5 @@ const styles = StyleSheet.create({
     color: Colors.surface,
   },
 });
+
+export default CreateOpenCircleScreen;

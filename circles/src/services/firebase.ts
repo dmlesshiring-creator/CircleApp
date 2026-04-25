@@ -24,7 +24,10 @@ console.log('Firebase config:', { ...firebaseConfig, apiKey: '***' });
 // Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 
-console.log('Firebase app initialized:', app);
+console.log('Firebase app initialized:', app.name);
+
+// Firebase Services
+export const auth = getAuth(app);
 export const db = getDatabase(app);
 export const firestore = getFirestore(app);
 export const storage = getStorage(app);
