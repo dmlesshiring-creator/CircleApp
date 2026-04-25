@@ -37,10 +37,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "your-project-id-will-be-added-by-eas"
+        "projectId": "7b264cec-5bda-4d35-81b6-476a157e294a"
       }
     },
-    "owner": "your-expo-username",
+    "owner": "srikanthsriram",
     "updates": {
       "url": "https://u.expo.dev/your-project-id"
     },
