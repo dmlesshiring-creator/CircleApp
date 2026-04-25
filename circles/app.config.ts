@@ -39,7 +39,7 @@ export default {
       [
         'expo-notifications',
         {
-          sounds: ['default'],
+          sounds: [],
         },
       ],
     ],
