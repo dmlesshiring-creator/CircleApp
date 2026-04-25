@@ -2,8 +2,8 @@ import Constants from 'expo-constants';
 
 export default {
   expo: {
-    name: 'circles',
-    slug: 'circles',
+    name: 'Circles',
+    slug: 'circles-app',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -16,12 +16,21 @@ export default {
     },
     ios: {
       supportsTablet: true,
+      bundleIdentifier: 'com.circles.app',
     },
     android: {
+      package: 'com.circles.app',
+      versionCode: 1,
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff',
       },
+      permissions: [
+        'CAMERA',
+        'READ_EXTERNAL_STORAGE',
+        'WRITE_EXTERNAL_STORAGE',
+        'NOTIFICATIONS',
+      ],
     },
     web: {
       favicon: './assets/favicon.png',
@@ -35,6 +44,9 @@ export default {
       ],
     ],
     extra: {
+      eas: {
+        projectId: '7b264cec-5bda-4d35-81b6-476a157e294a',
+      },
       // Firebase Config - sourced from .env
       firebaseApiKey: process.env.FIREBASE_API_KEY,
       firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -49,5 +61,6 @@ export default {
       googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
       perspectiveApiKey: process.env.PERSPECTIVE_API_KEY,
     },
+    owner: 'srikanthsriram',
   },
 };
