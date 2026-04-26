@@ -15,6 +15,7 @@ import { firestore, auth } from '../../services/firebase';
 import { Colors } from '../../constants/colors';
 import type { OpenCircle } from '../../types/feed.types';
 import { TransitBookingBanner } from '../../components/feed/TransitBookingBanner';
+import { SimpleChatView } from '../../components/chat/SimpleChatView';
 
 type FeedStackParamList = {
   OpenCircleDetailScreen: { circleId: string };
@@ -205,13 +206,7 @@ export const OpenCircleDetailScreen: React.FC = () => {
       );
     }
 
-    return (
-      <View style={styles.chatContainer}>
-        <Text style={styles.placeholderText}>
-          Chat interface would go here (reuse CircleChatScreen component)
-        </Text>
-      </View>
-    );
+    return <SimpleChatView circleId={circleId} circleType="public" />;
   };
 
   const renderInfoTab = () => (
