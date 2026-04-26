@@ -75,6 +75,37 @@ export const OpenCircleDetailScreen: React.FC = () => {
     return () => unsubscribe();
   }, [circleId]);
 
+  const handleJoin = async () => {
+    if (!circle || !currentUserUid) return;
+
+    try {
+      const circleRef = doc(firestore, 'public_circles', circleId);
+      
+      if (circle.joinMode === 'approval') {
+        // Request to join - add to joinRequests array
+        const { arrayUnion } = await import('firebase/firestore');
+        await updateDoc(circleRef, {
+          joinRequests: arrayUnion(currentUserUid),
+        });
+        Alert.alert(
+          'Request Sent',
+          'Your request to join has been sent to the circle creator. You\'ll be notified when they respond.'
+        );
+      } else {
+        // Open circle - join immediately
+        const { arrayUnion } = await import('firebase/firestore');
+        await updateDoc(circleRef, {
+          members: arrayUnion(currentUserUid),
+          memberCount: circle.memberCount + 1,
+        });
+        Alert.alert('Success', 'You\'ve joined the circle! 🎉');
+      }
+    } catch (error) {
+      console.error('Error joining circle:', error);
+      Alert.alert('Error', 'Failed to join circle. Please try again.');
+    }
+  };
+
   const handleLeave = async () => {
     if (!circle || !currentUserUid) return;
 
@@ -154,12 +185,22 @@ export const OpenCircleDetailScreen: React.FC = () => {
 
   const renderChatTab = () => {
     if (!isMember) {
+      const hasRequested = circle?.joinRequests?.includes(currentUserUid);
+      
       return (
         <View style={styles.previewBanner}>
-          <Text style={styles.previewText}>Join this circle to participate in the chat</Text>
-          <TouchableOpacity style={styles.joinButton}>
-            <Text style={styles.joinButtonText}>Join Circle</Text>
-          </TouchableOpacity>
+          <Text style={styles.previewText}>
+            {hasRequested 
+              ? 'Your request to join is pending approval' 
+              : 'Join this circle to participate in the chat'}
+          </Text>
+          {!hasRequested && (
+            <TouchableOpacity style={styles.joinButton} onPress={handleJoin}>
+              <Text style={styles.joinButtonText}>
+                {circle?.joinMode === 'approval' ? 'Request to Join' : 'Join Circle'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       );
     }
@@ -329,6 +370,17 @@ export const OpenCircleDetailScreen: React.FC = () => {
 
       {/* Tab Content */}
       {activeTab === 'chat' ? renderChatTab() : renderInfoTab()}
+
+      {/* Floating Join Button for non-members */}
+      {!isMember && !circle.joinRequests?.includes(currentUserUid) && (
+        <View style={styles.floatingButtonContainer}>
+          <TouchableOpacity style={styles.floatingJoinButton} onPress={handleJoin}>
+            <Text style={styles.floatingJoinButtonText}>
+              {circle.joinMode === 'approval' ? 'Request to Join' : 'Join Circle'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -568,6 +620,32 @@ const styles = StyleSheet.create({
   },
   memberMore: {
     fontSize: 12,
+    fontWeight: '700',
+    color: Colors.surface,
+  },
+  floatingButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    backgroundColor: Colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 8,
+  },
+  floatingJoinButton: {
+    backgroundColor: Colors.success,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  floatingJoinButtonText: {
+    fontSize: 18,
     fontWeight: '700',
     color: Colors.surface,
   },
