@@ -1,18 +1,25 @@
 # 🚀 Push and Rebuild Instructions
 
 **Date:** April 26, 2026  
-**Status:** Ready to push and rebuild
+**Status:** ⚠️ MUST PUSH BEFORE BUILDING
 
 ---
 
-## ✅ **Commits Ready to Push:**
+## 🚨 **IMPORTANT: You Have 1 Unpushed Commit!**
 
-You have **4 new commits** ready to push:
+Your latest fix is on your LOCAL machine but NOT on GitHub yet!
 
+**Commit to push:**
+- **a6d1135** - fix: Remove react-native-reanimated to fix build ← **THIS FIXES THE BUILD!**
+
+**Previously pushed commits:**
 1. **640ba99** - Complete 100% implementation (services, hooks, stores, navigation)
 2. **5b2dad3** - Install missing dependencies (Daily.co, expo-linear-gradient, etc.)
 3. **1960535** - Add type declarations for packages without official types
 4. **c9ae2de** - Add .npmrc to resolve dependency conflicts in EAS build
+5. **2a43b00** - Add push and rebuild instructions
+6. **13cd4af** - Install react-native-worklets-core
+7. **132e539** - Downgrade react-native-reanimated (← GitHub is here, but you're ahead!)
 
 ---
 
@@ -36,12 +43,16 @@ git push
 
 ### **Step 2: Rebuild with EAS** ✅
 
-After pushing, run:
+After pushing, run with `--clear-cache` to ensure fresh build:
 
 ```bash
 cd circles
-eas build --platform android --profile preview
+eas build --platform android --profile preview --clear-cache
 ```
+
+**Why `--clear-cache`?**
+- Ensures EAS doesn't use old cached dependencies
+- Forces a completely fresh build with the new code
 
 **What will happen:**
 - ✅ EAS will pull the latest code from GitHub
