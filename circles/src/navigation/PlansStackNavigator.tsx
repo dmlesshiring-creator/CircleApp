@@ -1,18 +1,10 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text } from 'react-native';
+import PlansHomeScreen from '../screens/plan/PlansHomeScreen';
+import PlanDetailScreen from '../screens/plan/PlanDetailScreen';
 import { Routes } from '../constants/routes';
 
 const Stack = createNativeStackNavigator();
-
-// Placeholder Plans Home Screen
-function PlansHomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Plans Coming Soon</Text>
-    </View>
-  );
-}
 
 export default function PlansStackNavigator() {
   return (
@@ -26,6 +18,13 @@ export default function PlansStackNavigator() {
         name={Routes.PLANS_HOME}
         component={PlansHomeScreen}
         options={{ title: 'Upcoming Plans' }}
+      />
+      <Stack.Screen
+        name={Routes.PLAN_DETAIL}
+        component={PlanDetailScreen}
+        options={({ route }) => ({
+          title: route.params?.planTitle || 'Plan Details',
+        })}
       />
     </Stack.Navigator>
   );

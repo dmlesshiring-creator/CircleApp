@@ -30,6 +30,10 @@ export const Routes = {
   CIRCLE_SETTINGS: 'CircleSettings',
   CREATE_CIRCLE: 'CreateCircle',
   JOIN_CIRCLE: 'JoinCircle',
+  VIDEO_CALL: 'VideoCall',
+  AVAILABILITY_CHECK: 'AvailabilityCheck',
+  ADD_EXPENSE: 'AddExpense',
+  CREATE_POLL: 'CreatePoll',
 
   // Plan Stack
   PLANS_HOME: 'PlansHome',
@@ -38,6 +42,10 @@ export const Routes = {
 
   // Profile
   PROFILE: 'Profile',
+  EDIT_PROFILE: 'EditProfile',
+  SUBSCRIPTION: 'Subscription',
+  YEAR_IN_CIRCLES: 'YearInCircles',
+  SETTINGS: 'Settings',
 } as const;
 
 export type RouteName = (typeof Routes)[keyof typeof Routes];
